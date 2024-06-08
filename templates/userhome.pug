@@ -45,7 +45,7 @@ html(lang="en")
       }
   body
     p Hello #{username}!
-    p Your ID is #{userid}.
+    //- p Your ID is #{userid}.
     form(action=`/user/${username}/${userid}`, method="POST")
       label(for="taskname") Task Name:
       input(type="text", id="taskname", name="taskname", required)

@@ -4,7 +4,6 @@ const path=require('path');
 const bodyparser=require('body-parser');
 const mongoose=require('mongoose')
 const port=5000;
-let usercount=1
 const uri='mongodb://localhost:27017/todoo';
 
 mongoose.connect(uri, {useNewUrlParser:true, useUnifiedTopology:true})
@@ -12,17 +11,11 @@ mongoose.connect(uri, {useNewUrlParser:true, useUnifiedTopology:true})
 .catch(err => console.log(err));
 
 const userschema=new mongoose.Schema ({
-    userid: {type: Number, unique: true, required: true},
     username: String,
-    password: String
+    password: String,
+    tasks: [String]
 });
 const User=mongoose.model('User', userschema)
-
-const taskSchema=new mongoose.Schema ({
-    userid: Number,
-    taskname: String
-});
-const Task=mongoose.model('Task', taskSchema)
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'templates'));
@@ -39,8 +32,7 @@ app.get('/register', (req, res) => {
 app.post('/register',(req,res) => {
     const username=req.body.username;
     const password=req.body.password;
-    const userid=usercount++
-    const user=new User({userid, username, password});
+    const user=new User({username, password});
     user.save()
     .then(() => {
         console.log("User inserted");
@@ -48,7 +40,7 @@ app.post('/register',(req,res) => {
     })
     .catch(err => {
         console.log(err);
-        res.status(500).send("Error insering");
+        res.status(500).send("Error inserting");
     })
 });
 
@@ -66,7 +58,7 @@ app.post('/login', (req, res) => {
             res.status(401).send("Invalid credentials")
         }
         else {
-            res.redirect(`/user/${username}/${user.userid}`)
+            res.redirect(`/user/${username}/${user._id}`)
         }
     })
     .catch(err=> {
@@ -81,20 +73,11 @@ app.get("/user/:username/:userid", (req, res)=> {
     res.render("userhome",{username:username, userid:userid})
 })
 
-app.post("/user/:username", (req, res)=> {
+app.post("/user/:username/:userid", (req, res)=> {
     const username=req.params.username
-    const userid=req.query.id
+    const userid=req.params.id
     const taskname=req.body.taskname
-    const task = new Task({userid, taskname})
-    task.save()
-    .then(()=> {
-        console.log("Task inserted")
-        res.redirect(`/user/${username}`)
-    })
-    .catch(err=> {
-        console.log(err)
-        res.status(500).send("Error inserting task")
-    })
+    
 })
 
 app.listen(port, () =>{

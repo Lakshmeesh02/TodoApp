@@ -75,9 +75,19 @@ app.get("/user/:username/:userid", (req, res)=> {
 
 app.post("/user/:username/:userid", (req, res)=> {
     const username=req.params.username
-    const userid=req.params.id
+    const userid=new mongoose.Types.ObjectId(req.params.userid)
     const taskname=req.body.taskname
-    
+    //console.log(username, userid, taskname)
+    User.findOne({_id: userid})
+    .then(user=> {
+        user.tasks.push(taskname)
+        user.save()
+        res.redirect(`/user/${username}/${userid}`)
+    })
+    .catch(err=> {
+        console.log(err)
+        res.status(500).send("Error adding task")
+    })
 })
 
 app.listen(port, () =>{

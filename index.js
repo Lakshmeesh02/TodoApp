@@ -90,6 +90,20 @@ app.post("/user/:username/:userid", (req, res)=> {
     })
 })
 
+app.get("/tasks/:userid", (req, res)=> {
+    const userid=req.params.userid
+    let usertasks=[]
+    User.findOne({_id: userid})
+    .then(user=> {
+        usertasks=user.tasks
+        res.render("tasks", {tasks: usertasks})
+    })
+    .catch(err=> {
+        console.log(err)
+        res.status(505).send("Error obtaining tasks")
+    })
+})
+
 app.listen(port, () =>{
     console.log("Listening on port 5000");
 });

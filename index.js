@@ -104,6 +104,21 @@ app.get("/tasks/:userid", (req, res)=> {
     })
 })
 
+app.post("/removetasks/:userid", (req, res)=> {
+    const userid=req.params.userid
+    const taskid=req.body.taskid
+    User.findOne({_id: userid})
+    .then(user => {
+        user.tasks.splice(taskid-1, 1)
+        user.save()
+        res.redirect(`/tasks/${userid}`)
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).send("Error removing task")
+    })
+})
+
 app.listen(port, () =>{
     console.log("Listening on port 5000");
 });

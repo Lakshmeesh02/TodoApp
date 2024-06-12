@@ -53,5 +53,11 @@ html(lang="en")
       button(type="submit") Add Task
     a(href=`/tasks/${userid}`) View tasks
     br
+    form(action=`/removetasks/${userid}`, method="POST")
+      label(for="taskid") Task ID:
+      input(type="text", id="taskid", name="taskid", required)
+      br
+      button(type="submit") removetasks
+    br
     a(href="/") Logout
 

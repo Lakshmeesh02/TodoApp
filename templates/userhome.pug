@@ -43,6 +43,19 @@ html(lang="en")
       .tasks a:hover {
         color: #0056b3;
       }
+            table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #f0f0f0;
+      }
+
   body
     p Hello #{username}!
     //- p Your ID is #{userid}.
@@ -51,13 +64,24 @@ html(lang="en")
       input(type="text", id="taskname", name="taskname", required)
       br
       button(type="submit") Add Task
-    a(href=`/tasks/${userid}`) View tasks
     br
-    form(action=`/removetasks/${userid}`, method="POST")
+    form(action=`/removetasks/${username}/${userid}`, method="POST")
       label(for="taskid") Task ID:
       input(type="text", id="taskid", name="taskid", required)
       br
       button(type="submit") removetasks
     br
+    h1 Your Tasks
+    table
+      thead
+        tr
+          th ID
+          th Task
+      tbody
+        each task in tasks
+          tr
+            td #{tasks.indexOf(task) + 1}
+            td #{task}
     a(href="/") Logout
+
 

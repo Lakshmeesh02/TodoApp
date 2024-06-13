@@ -98,10 +98,10 @@ app.post("/user/:username/:userid", (req, res)=> {
     })
 })
 
-app.post("/removetasks/:username/:userid", (req, res)=> {
+app.get("/removetasks/:username/:userid/:taskid", (req, res)=> {
     const username=req.params.username
     const userid=req.params.userid
-    const taskid=req.body.taskid
+    const taskid=req.params.taskid
     User.findOne({_id: userid})
     .then(user => {
         user.tasks.splice(taskid-1, 1)

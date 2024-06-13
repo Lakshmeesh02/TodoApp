@@ -70,7 +70,15 @@ app.post('/login', (req, res) => {
 app.get("/user/:username/:userid", (req, res)=> {
     const username=req.params.username
     const userid=req.params.userid
-    res.render("userhome",{username:username, userid:userid})
+    User.findOne({_id: userid})
+    .then(user => {
+        const tasks=user.tasks
+        res.render("userhome", {username: username, userid: userid, tasks: tasks})
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).send("Error fetching tasks")
+    })
 })
 
 app.post("/user/:username/:userid", (req, res)=> {
@@ -90,28 +98,15 @@ app.post("/user/:username/:userid", (req, res)=> {
     })
 })
 
-app.get("/tasks/:userid", (req, res)=> {
-    const userid=req.params.userid
-    let usertasks=[]
-    User.findOne({_id: userid})
-    .then(user=> {
-        usertasks=user.tasks
-        res.render("tasks", {tasks: usertasks})
-    })
-    .catch(err=> {
-        console.log(err)
-        res.status(505).send("Error obtaining tasks")
-    })
-})
-
-app.post("/removetasks/:userid", (req, res)=> {
+app.post("/removetasks/:username/:userid", (req, res)=> {
+    const username=req.params.username
     const userid=req.params.userid
     const taskid=req.body.taskid
     User.findOne({_id: userid})
     .then(user => {
         user.tasks.splice(taskid-1, 1)
         user.save()
-        res.redirect(`/tasks/${userid}`)
+        res.redirect(`/user/${username}/${userid}`)
     })
     .catch(err => {
         console.log(err)
